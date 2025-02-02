@@ -1,0 +1,2 @@
+# eclettica-accessories
+Accessory Manager
