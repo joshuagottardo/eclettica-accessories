@@ -3,9 +3,10 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QComboBox, QListWidget
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QComboBox, QListWidget, QListWidgetItem
 )
 from db.db_manager import DatabaseManager
+from ui.result_item_widget import ResultItemWidget
 
 tags_list = ["------", "Laccio", "Soletta", "Pad in gel", "Plantare ortopedici", "Cinturino", "Intersuola", "Raffreddatore", "Tacco", "Copritacco", "Spazzola", "Lucido", "Borsa"]
 
@@ -48,8 +49,9 @@ class Search(QWidget):
 
         # Lista dei risultati
         self.result_list = QListWidget()
+        """
         self.result_list.setStyleSheet(
-            """
+        
             QListWidget {
                 background-color: #323232;
                 border: none;
@@ -69,8 +71,8 @@ class Search(QWidget):
                 background-color: #007BFF;
                 color: #ffffff;
             }
-            """
         )
+        """
 
         layout.addWidget(self.result_list)
 
@@ -89,38 +91,44 @@ class Search(QWidget):
 
     def update_results(self, text=""):
         """Aggiorna i risultati della ricerca dinamicamente in base al nome e al tag."""
-        # Filtro per il tipo
-        selected_tag = self.type_combobox.currentText().strip()  # Rimuove eventuali spazi extra
-
+        selected_tag = self.type_combobox.currentText().strip()
 
         # Se non c'è testo nel campo NOME
         if not text:
-            # Mostra tutti i risultati del tipo selezionato
-            filtered_names = [
-                f"{name} ({type_})" 
-                for name, type_ in self.cache 
+            filtered_items = [
+                (name, type_) 
+                for name, type_ in self.cache
                 if (selected_tag == "------" or selected_tag.lower() in type_.lower())
             ]
         else:
-            # Filtro per nome
-            filtered_names = [
-                f"{name} ({type_})" 
+            filtered_items = [
+                (name, type_)
                 for name, type_ in self.cache if text.lower() in name.lower()
             ]
-
-            # Filtro per tipo, applicato solo ai risultati precedenti
             if selected_tag != "------":
-                filtered_names = [
-                    result for result in filtered_names
-                    if selected_tag.lower() in result.lower()  # Confronto case-insensitive
+                filtered_items = [
+                    (name, type_) for name, type_ in filtered_items
+                    if selected_tag.lower() in type_.lower()
                 ]
 
-        # Aggiorna la lista dei risultati
+        # Pulizia lista risultati
         self.result_list.clear()
-        self.result_list.addItems(filtered_names)
-    
+
+        # Aggiunta dei nuovi elementi personalizzati
+        for name, type_ in filtered_items:
+            item_widget = ResultItemWidget(name, type_)
+            item = QListWidgetItem(self.result_list)
+            item.setSizeHint(item_widget.sizeHint())  # Imposta la dimensione del widget
+            self.result_list.addItem(item)
+            self.result_list.setItemWidget(item, item_widget)  # Assegna il widget personalizzato
+
     def display_all_results(self):
-        """Mostra tutti i risultati disponibili al caricamento."""
-        all_results = [f"{name} ({type_})" for name, type_ in self.cache]
-        self.result_list.clear()
-        self.result_list.addItems(all_results)
+        """Mostra tutti i risultati disponibili al caricamento con i widget personalizzati."""
+        self.result_list.clear()  # Pulisce la lista
+
+        for name, type_ in self.cache:
+            item_widget = ResultItemWidget(name, type_)
+            item = QListWidgetItem(self.result_list)
+            item.setSizeHint(item_widget.sizeHint())  # Imposta la dimensione del widget
+            self.result_list.addItem(item)
+            self.result_list.setItemWidget(item, item_widget)  # Assegna il widget personalizzato
