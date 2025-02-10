@@ -1,7 +1,10 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QComboBox, QCheckBox, QGridLayout, QFileDialog, QMessageBox
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QComboBox, QFileDialog, QMessageBox, QSystemTrayIcon
 )
+
+from PySide6.QtGui import QIcon
 from db.db_manager import DatabaseManager
+from ui.components import CustomMessageBox
 
 tags_list = ["Laccio", "Soletta", "Pad in gel", "Plantare ortopedici", "Cinturino", "Intersuola", "Raffreddatore", "Tacco", "Copritacco", "Spazzola", "Lucido", "Borsa"]
 
@@ -9,6 +12,10 @@ class Add(QWidget):
     def __init__(self):
         super().__init__()
         self.db_manager = DatabaseManager()  # Istanzia il gestore del database
+        
+        # Configura l'icona di sistema per le notifiche
+        self.tray_icon = QSystemTrayIcon(QIcon("resources/icon.jpeg"), self)
+        self.tray_icon.show()
 
         # Layout principale
         layout = QVBoxLayout()
@@ -95,7 +102,14 @@ class Add(QWidget):
                 immagine_data = file.read()
 
             self.db_manager.insert_accessory(nome, tipo, immagine_data)
-            QMessageBox.information(self, "Successo", "Accessorio aggiunto con successo!")
+            
+            custom_msg = CustomMessageBox(
+                icon=QIcon("resources/icon.jpeg"),
+                title="Successo",
+                text="Accessorio aggiunto correttamente!",
+                buttons=QMessageBox.Ok
+            )
+            custom_msg.show()
 
             self.name_input.clear()
             self.type_combobox.setCurrentIndex(0)

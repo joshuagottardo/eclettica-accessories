@@ -5,9 +5,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QComboBox, QListWidget, QListWidgetItem
 )
+from PySide6.QtGui import QIcon
 from db.db_manager import DatabaseManager
 from ui.result_item_widget import ResultItemWidget
-from models.accessory import Accessory
 
 tags_list = ["------", "Laccio", "Soletta", "Pad in gel", "Plantare ortopedici", "Cinturino", "Intersuola", "Raffreddatore", "Tacco", "Copritacco", "Spazzola", "Lucido", "Borsa"]
 
@@ -80,6 +80,7 @@ class Search(QWidget):
         self.setLayout(layout)
         
         self.load_cache()
+                
 
     def load_cache(self):
         """Carica tutti i nomi e i tipi nella cache locale e visualizzali subito."""
