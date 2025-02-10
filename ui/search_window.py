@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (
 )
 from db.db_manager import DatabaseManager
 from ui.result_item_widget import ResultItemWidget
+from models.accessory import Accessory
 
 tags_list = ["------", "Laccio", "Soletta", "Pad in gel", "Plantare ortopedici", "Cinturino", "Intersuola", "Raffreddatore", "Tacco", "Copritacco", "Spazzola", "Lucido", "Borsa"]
 
@@ -24,23 +25,23 @@ class Search(QWidget):
         name_layout = QHBoxLayout()
         name_label = QLabel("NOME")
         self.name_input = QLineEdit()
-        self.name_input.setFixedWidth(300)  # Imposta la larghezza fissa
+        self.name_input.setFixedWidth(300)
         self.name_input.textChanged.connect(lambda text: self.update_results(text))  # Connettiti al metodo di aggiornamento
         name_layout.addWidget(name_label)
         name_layout.addWidget(self.name_input)
-        name_layout.addStretch()  # Aggiungi spazio vuoto
+        name_layout.addStretch()
         layout.addLayout(name_layout)
 
         # Campo TIPO
         type_layout = QHBoxLayout()
         type_label = QLabel("TIPO")
         self.type_combobox = QComboBox()    
-        self.type_combobox.addItems(tags_list)  # Aggiungi i tipi qui
-        self.type_combobox.setFixedWidth(200)  # Imposta la larghezza fissa
+        self.type_combobox.addItems(tags_list)
+        self.type_combobox.setFixedWidth(200)
         self.type_combobox.currentTextChanged.connect(lambda _: self.update_results(self.name_input.text()))  # Connessione al cambiamento del tag
         type_layout.addWidget(type_label)
         type_layout.addWidget(self.type_combobox)
-        type_layout.addStretch()  # Aggiungi spazio vuoto
+        type_layout.addStretch()
         layout.addLayout(type_layout)
 
         # Sezione dei risultati
@@ -75,60 +76,50 @@ class Search(QWidget):
         """
 
         layout.addWidget(self.result_list)
-
-        # Imposta il layout principale
+        
         self.setLayout(layout)
-
-        # Carica inizialmente i dati nella cache
+        
         self.load_cache()
 
     def load_cache(self):
         """Carica tutti i nomi e i tipi nella cache locale e visualizzali subito."""
-        self.cache = self.db_manager.get_all_names_and_types()  # Ora è una lista di tuple (nome, tipo)
+        self.cache = self.db_manager.get_all_names_and_types()
 
-        # Visualizza tutti i risultati iniziali
         self.display_all_results()
 
     def update_results(self, text=""):
-        """Aggiorna i risultati della ricerca dinamicamente in base al nome e al tag."""
         selected_tag = self.type_combobox.currentText().strip()
 
-        # Se non c'è testo nel campo NOME
         if not text:
             filtered_items = [
-                (name, type_) 
-                for name, type_ in self.cache
-                if (selected_tag == "------" or selected_tag.lower() in type_.lower())
+                accessory for accessory in self.cache 
+                if selected_tag == "------" or selected_tag.lower() in accessory.tipo.lower()
             ]
         else:
             filtered_items = [
-                (name, type_)
-                for name, type_ in self.cache if text.lower() in name.lower()
+                accessory for accessory in self.cache if text.lower() in accessory.nome.lower()
             ]
             if selected_tag != "------":
                 filtered_items = [
-                    (name, type_) for name, type_ in filtered_items
-                    if selected_tag.lower() in type_.lower()
+                    accessory for accessory in filtered_items if selected_tag.lower() in accessory.tipo.lower()
                 ]
 
-        # Pulizia lista risultati
         self.result_list.clear()
-
-        # Aggiunta dei nuovi elementi personalizzati
-        for name, type_ in filtered_items:
-            item_widget = ResultItemWidget(name, type_)
+        
+        for accessory in filtered_items:
+            item_widget = ResultItemWidget(accessory.nome, accessory.tipo)
             item = QListWidgetItem(self.result_list)
-            item.setSizeHint(item_widget.sizeHint())  # Imposta la dimensione del widget
+            item.setSizeHint(item_widget.sizeHint())
             self.result_list.addItem(item)
-            self.result_list.setItemWidget(item, item_widget)  # Assegna il widget personalizzato
+            self.result_list.setItemWidget(item, item_widget)
 
     def display_all_results(self):
-        """Mostra tutti i risultati disponibili al caricamento con i widget personalizzati."""
-        self.result_list.clear()  # Pulisce la lista
+        
+        self.result_list.clear()
 
-        for name, type_ in self.cache:
-            item_widget = ResultItemWidget(name, type_)
+        for accessory in self.cache:
+            item_widget = ResultItemWidget(accessory.nome, accessory.tipo)
             item = QListWidgetItem(self.result_list)
-            item.setSizeHint(item_widget.sizeHint())  # Imposta la dimensione del widget
+            item.setSizeHint(item_widget.sizeHint())
             self.result_list.addItem(item)
-            self.result_list.setItemWidget(item, item_widget)  # Assegna il widget personalizzato
+            self.result_list.setItemWidget(item, item_widget)

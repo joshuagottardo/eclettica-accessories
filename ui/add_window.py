@@ -34,25 +34,6 @@ class Add(QWidget):
         type_layout.addStretch()
         layout.addLayout(type_layout)
 
-        # Campo TAG (12 checkbox in griglia)
-        """
-        tag_container = QHBoxLayout()
-        tag_label = QLabel("TAG")
-        layout.addWidget(tag_label)
-
-        self.tag_layout = QGridLayout()
-        self.tags = []
-        for i in range(12):
-            tag_checkbox = QCheckBox(tags_list[i])
-            self.tags.append(tag_checkbox)
-            self.tag_layout.addWidget(tag_checkbox, i // 4, i % 4)
-
-        self.tag_layout.setSpacing(25)
-        tag_container.addLayout(self.tag_layout)
-        tag_container.addStretch()
-        layout.addLayout(tag_container)
-        """
-
         # Selezione immagine
         image_layout = QHBoxLayout()
         image_label = QLabel("Seleziona Immagine")
@@ -84,12 +65,11 @@ class Add(QWidget):
             }
             """
         )
-        self.confirm_button.clicked.connect(self.add_accessory)  # Collega il pulsante alla funzione
+        self.confirm_button.clicked.connect(self.add_accessory)
         layout.addWidget(self.confirm_button)
 
         layout.addStretch()
 
-        # Imposta il layout principale
         self.setLayout(layout)
 
     def choose_image(self):
@@ -114,11 +94,9 @@ class Add(QWidget):
             with open(immagine_path, "rb") as file:
                 immagine_data = file.read()
 
-            # Inserisci i dati nel database
             self.db_manager.insert_accessory(nome, tipo, immagine_data)
             QMessageBox.information(self, "Successo", "Accessorio aggiunto con successo!")
 
-            # Resetta i campi
             self.name_input.clear()
             self.type_combobox.setCurrentIndex(0)
             self.image_path.clear()

@@ -1,4 +1,8 @@
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import sqlite3
+from models.accessory import Accessory
 
 class DatabaseManager:
     def __init__(self, db_name="app_database.db"):
@@ -47,17 +51,11 @@ class DatabaseManager:
 
     def get_all_names_and_types(self):
         """Recupera tutti i nomi e i tipi dal database."""
-        query = "SELECT nome, tipo FROM Accessorio"
+        query = "SELECT id, nome, tipo, immagine FROM Accessorio"
         cursor = self.connection.cursor()
-        cursor.execute(query)
-        return cursor.fetchall()
-
-    def search_by_name(self, partial_name):
-        """Cerca i nomi nel database che corrispondono parzialmente."""
-        query = "SELECT nome FROM Accessorio WHERE nome LIKE ?"
-        cursor = self.connection.cursor()
-        cursor.execute(query, (f"%{partial_name}%",))
-        return [row[0] for row in cursor.fetchall()]
+        results = cursor.execute(query)
+        accessories = [Accessory(id, nome, tipo, immagine) for id, nome, tipo, immagine in results]
+        return accessories
 
     def close_connection(self):
         """Chiude la connessione al database."""
