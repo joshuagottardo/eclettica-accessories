@@ -2,21 +2,26 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+#tags_list = ["------", ]
+
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QComboBox, QListWidget, QListWidgetItem
 )
-from PySide6.QtGui import QIcon
+from PySide6.QtCore import Qt
 from db.db_manager import DatabaseManager
 from ui.result_item_widget import ResultItemWidget
-
-tags_list = ["------", "Laccio", "Soletta", "Pad in gel", "Plantare ortopedici", "Cinturino", "Intersuola", "Raffreddatore", "Tacco", "Copritacco", "Spazzola", "Lucido", "Borsa"]
+import ui.gallery_window as gallery_window
 
 class Search(QWidget):
-    def __init__(self, db_manager: DatabaseManager):
+    def __init__(self, db_manager: DatabaseManager, gallery_window: gallery_window.GalleryWindow):
         super().__init__()
 
         self.db_manager = db_manager  # Salva il riferimento al DatabaseManager
+        self.gallery_window = gallery_window  # Riferimento alla GalleryWindow per aggiornare l'immagine
         self.cache = []  # Cache locale dei nomi e dei tipi
+        self.tags_list = self.db_manager.get_tags()
+        self.tags_list.insert(0, "------")  # Aggiungi "------" come opzione di default
+
 
         # Layout principale
         layout = QVBoxLayout()
@@ -36,7 +41,7 @@ class Search(QWidget):
         type_layout = QHBoxLayout()
         type_label = QLabel("TIPO")
         self.type_combobox = QComboBox()    
-        self.type_combobox.addItems(tags_list)
+        self.type_combobox.addItems(self.tags_list)
         self.type_combobox.setFixedWidth(200)
         self.type_combobox.currentTextChanged.connect(lambda _: self.update_results(self.name_input.text()))  # Connessione al cambiamento del tag
         type_layout.addWidget(type_label)
@@ -80,6 +85,8 @@ class Search(QWidget):
         self.setLayout(layout)
         
         self.load_cache()
+        
+        self.result_list.itemClicked.connect(self.on_item_clicked)
                 
 
     def load_cache(self):
@@ -111,8 +118,19 @@ class Search(QWidget):
             item_widget = ResultItemWidget(accessory.nome, accessory.tipo)
             item = QListWidgetItem(self.result_list)
             item.setSizeHint(item_widget.sizeHint())
+            # Salva l'intero oggetto Accessory nell'item
+            item.setData(Qt.UserRole, accessory)
             self.result_list.addItem(item)
             self.result_list.setItemWidget(item, item_widget)
+            
+    def on_item_clicked(self, item: QListWidgetItem):
+        """
+        Quando l'utente clicca su un item, recupera l'oggetto Accessory associato
+        e aggiorna la GalleryWindow con l'immagine.
+        """
+        accessory = item.data(Qt.UserRole)
+        if accessory and hasattr(accessory, "immagine"):
+            self.gallery_window.update_image(accessory.immagine)
 
     def display_all_results(self):
         
@@ -122,5 +140,6 @@ class Search(QWidget):
             item_widget = ResultItemWidget(accessory.nome, accessory.tipo)
             item = QListWidgetItem(self.result_list)
             item.setSizeHint(item_widget.sizeHint())
+            item.setData(Qt.UserRole, accessory)
             self.result_list.addItem(item)
             self.result_list.setItemWidget(item, item_widget)

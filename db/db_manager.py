@@ -51,11 +51,19 @@ class DatabaseManager:
 
     def get_all_names_and_types(self):
         """Recupera tutti i nomi e i tipi dal database."""
-        query = "SELECT id, nome, tipo, immagine FROM Accessorio"
+        query = "SELECT id, nome, tipo, immagine FROM Accessorio ORDER BY nome"
         cursor = self.connection.cursor()
         results = cursor.execute(query)
         accessories = [Accessory(id, nome, tipo, immagine) for id, nome, tipo, immagine in results]
         return accessories
+    
+    def get_tags(self):
+        """Recupera tutti i tag dal database."""
+        query = "SELECT nome FROM tag ORDER BY nome"
+        cursor = self.connection.cursor()
+        cursor.execute(query)
+        tags = [row[0] for row in cursor.fetchall()]
+        return tags
 
     def close_connection(self):
         """Chiude la connessione al database."""

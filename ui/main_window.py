@@ -23,6 +23,14 @@ class MainWindow(QMainWindow):
         # Crea il database manager
         self.db_manager = DatabaseManager()
 
+        # Crea un'unica istanza della GalleryWindow
+        self.gallery_window = GalleryWindow()
+
+        # Passa la stessa istanza della gallery a Search
+        self.search_window = Search(self.db_manager, self.gallery_window)
+        add_window = Add()
+        add_window.accessory_added.connect(self.search_window.load_cache)
+
         # Crea il central widget
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -49,16 +57,15 @@ class MainWindow(QMainWindow):
 
         # PARTE SINISTRA: lo stacked widget
         self.stacked_widget = QStackedWidget()
-        self.stacked_widget.addWidget(Add())  # Aggiungi come prima pagina
-        self.stacked_widget.addWidget(Search(self.db_manager))  # Passa il DatabaseManager
+        self.stacked_widget.addWidget(add_window)
+        self.stacked_widget.addWidget(self.search_window)
         main_layout.addWidget(self.stacked_widget, 1)
 
         # PARTE DESTRA: layout verticale
         right_layout = QVBoxLayout()
 
-        # Galleria
-        self.gallery_widget = GalleryWindow()  # Crea l'istanza della galleria
-        right_layout.addWidget(self.gallery_widget, 2)
+        # Utilizza la stessa GalleryWindow creata in precedenza
+        right_layout.addWidget(self.gallery_window, 2)
 
         # Sezione inferiore con il DownloadWidget
         self.download_widget = DownloadWindow()  # Crea l'istanza del widget per il download
@@ -71,6 +78,7 @@ class MainWindow(QMainWindow):
         central_widget.setLayout(main_layout)
         
         self.stacked_widget.setCurrentIndex(1)
+
 
     def show_add_widget(self):
         self.stacked_widget.setCurrentIndex(0)  # Mostra la sezione "Aggiungi"
