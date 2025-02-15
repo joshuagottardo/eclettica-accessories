@@ -1,27 +1,39 @@
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel
+from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout
+from PySide6.QtGui import QFont
+from PySide6.QtCore import Qt
 
 class ResultItemWidget(QWidget):
-    def __init__(self, name, type_):
+    def __init__(self, nome, tipo):
         super().__init__()
 
+        # Layout principale
         layout = QHBoxLayout()
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(0)  # Nessuna separazione extra
 
-        # Nome accessorio
-        name_label = QLabel(name)
-        name_label.setStyleSheet("color: white; font-size: 14px; font-weight: bold;")
+        nomeUpper = nome.upper()
+        # Creazione della QLabel con entrambi i testi
+        label = QLabel(f"<b>{nomeUpper}</b>  <i style=\"color: grey; margin-right:auto;\">[{tipo}]</i>")  # HTML per formattazione
+        label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
-        # Tipo accessorio
-        type_label = QLabel(f"({type_})")
-        type_label.setStyleSheet("color: gray; font-size: 12px; font-style: italic;")
+        # Aggiungi la QLabel al layout
+        layout.addWidget(label)
 
-        layout.addWidget(name_label)
-        layout.addWidget(type_label)
-        layout.addStretch()
+        # Imposta il layout al widget
         self.setLayout(layout)
-        self.setStyleSheet(
-            """
-            background-color: #3a3a3a;
-            border-radius: 6px;
-            padding: 8px;
-        """
-        )
+
+        # Stile generale del widget
+        self.setStyleSheet("""
+            QWidget {
+                background-color: #323232;
+                border-radius: 10px;
+                padding: 15px;
+            }
+            QLabel {
+                color: white;
+                font-size: 17px;
+            }
+        """)
+
+        # Dimensioni minime
+        self.setMinimumHeight(50)

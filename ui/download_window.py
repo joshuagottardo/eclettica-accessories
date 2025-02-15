@@ -7,7 +7,7 @@ class DownloadWindow(QWidget):
         self.setLayout(QVBoxLayout())
 
         # Titolo della sezione
-        self.title = QLabel("Download Immagini")
+        self.title = QLabel("Download")
         self.layout().addWidget(self.title)
 
         # Layout orizzontale per la lista delle immagini
