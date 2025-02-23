@@ -64,11 +64,16 @@ class Search(QWidget):
                 
 
     def load_cache(self):
-        """Carica i dati dal database e visualizza i risultati."""
+        """
+        Carica i dati dal database e visualizza i risultati
+        """
         self.cache = self.db_manager.get_all_names_and_types()
         self.display_all_results()
 
     def update_results(self, text=""):
+        """
+        Mostra i risultati filtrati in base al testo inserito e al tipo selezionato
+        """
         selected_tag = self.type_combobox.currentText().strip()
 
         if not text:

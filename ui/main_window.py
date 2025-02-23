@@ -68,11 +68,15 @@ class MainWindow(QMainWindow):
 
 
     def show_add_widget(self):
-        """Mostra la sezione 'Aggiungi'"""
+        """
+        Mostra la sezione 'Aggiungi' e nasconde la sezione 'Download'.
+        """
         self.stacked_widget.setCurrentIndex(0)
         self.download_window.setHidden(True)
 
     def show_search_widget(self):
-        """Mostra la sezione 'Cerca'"""
+        """
+        Mostra la sezione 'Cerca' e mostra la sezione 'Download'.
+        """
         self.stacked_widget.setCurrentIndex(1)
         self.download_window.setHidden(False)

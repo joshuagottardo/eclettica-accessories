@@ -13,7 +13,9 @@ class GalleryWindow(QWidget):
         self.setLayout(self.layout)
 
     def update_image(self, image_data):
-        """Metodo per aggiornare l'immagine nella galleria"""
+        """
+        Metodo per aggiornare l'immagine nella galleria
+        """
         if image_data:
             pixmap = QPixmap()
             pixmap.loadFromData(image_data)

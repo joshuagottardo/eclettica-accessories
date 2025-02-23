@@ -78,14 +78,18 @@ class AddWindow(QWidget):
         self.setLayout(layout)
 
     def choose_image(self):
-        """Apre un file dialog per scegliere un'immagine."""
+        """
+        Apre un file dialog per scegliere un'immagine
+        """
         file_dialog = QFileDialog()
         file_path, _ = file_dialog.getOpenFileName(self, "Seleziona un'immagine", "", "Immagini (*.png *.jpg *.jpeg *.bmp *.gif)")
         if file_path:
             self.image_path.setText(file_path)
 
     def add_accessory(self):
-        """Gestisce l'inserimento di un nuovo accessorio nel database."""
+        """
+        Gestisce l'inserimento di un nuovo accessorio nel database
+        """
         nome = self.name_input.text()
         tipo = self.type_combobox.currentText()
         immagine_path = self.image_path.text()
