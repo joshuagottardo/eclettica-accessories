@@ -12,12 +12,8 @@ import ui.gallery_window as gallery_window
 import ui.download_window as download_window
 
 class Search(QWidget):
-    # Definiamo il segnale che trasmette l'immagine (BLOB)
-    image_selected = Signal(object)
     
-    def __init__(self, db_manager: DatabaseManager,
-                 gallery_window: gallery_window.GalleryWindow,
-                 download_window: download_window.DownloadWindow):
+    def __init__(self, db_manager: DatabaseManager, gallery_window: gallery_window.GalleryWindow, download_window: download_window.DownloadWindow):
         super().__init__()
 
         self.db_manager = db_manager  # Riferimento al DatabaseManager
@@ -66,9 +62,6 @@ class Search(QWidget):
         self.load_cache()
         
         self.result_list.itemClicked.connect(self.on_item_clicked)
-        
-        # Colleghiamo il segnale image_selected al metodo set_image_data del DownloadWindow
-        self.image_selected.connect(self.download_window.set_image_data)
                 
 
     def load_cache(self):
@@ -113,7 +106,7 @@ class Search(QWidget):
         accessory = item.data(Qt.UserRole)
         if accessory is not None and getattr(accessory, "immagine", None) is not None:
             self.gallery_window.update_image(accessory.immagine)
-            self.image_selected.emit(accessory.immagine)
+            self.download_window.set_image_data(accessory.immagine)
 
     def display_all_results(self):
         self.result_list.clear()

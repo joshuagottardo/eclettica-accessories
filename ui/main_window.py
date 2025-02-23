@@ -59,8 +59,7 @@ class MainWindow(QMainWindow):
         # PARTE DESTRA: layout verticale
         right_layout = QVBoxLayout()
         right_layout.addWidget(self.gallery_window, 2)
-        self.download_widget = DownloadWindow()  # Crea l'istanza del widget per il download
-        right_layout.addWidget(self.download_widget, 1)
+        right_layout.addWidget(self.download_window, 1)
         main_layout.addLayout(right_layout, 1)
         
         central_widget.setLayout(main_layout)
