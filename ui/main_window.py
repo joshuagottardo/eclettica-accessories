@@ -16,15 +16,15 @@ from ui.add_window import AddWindow
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Applicazione con due sezioni")
+        self.setWindowTitle("ECLETTICA ACCESSORIES")
         self.setMinimumSize(1366, 768)
 
         # Crezione riferimento alle classi utilizzate
         self.db_manager = DatabaseManager()
         self.gallery_window = GalleryWindow()
         self.download_window = DownloadWindow()
+        self.add_window = AddWindow(self.download_window)
         self.search_window = Search(self.db_manager, self.gallery_window, self.download_window)
-        self.add_window = AddWindow()
         
         # Collegamento segnale "accessory_added" al metodo "load_cache" di Search"
         self.add_window.accessory_added.connect(self.search_window.load_cache)
@@ -70,7 +70,9 @@ class MainWindow(QMainWindow):
     def show_add_widget(self):
         """Mostra la sezione 'Aggiungi'"""
         self.stacked_widget.setCurrentIndex(0)
+        self.download_window.setHidden(True)
 
     def show_search_widget(self):
         """Mostra la sezione 'Cerca'"""
         self.stacked_widget.setCurrentIndex(1)
+        self.download_window.setHidden(False)

@@ -8,12 +8,12 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal
 from db.db_manager import DatabaseManager
 from ui.result_item_widget import ResultItemWidget
-import ui.gallery_window as gallery_window
-import ui.download_window as download_window
+from ui.gallery_window import GalleryWindow
+from ui.download_window import DownloadWindow
 
 class Search(QWidget):
     
-    def __init__(self, db_manager: DatabaseManager, gallery_window: gallery_window.GalleryWindow, download_window: download_window.DownloadWindow):
+    def __init__(self, db_manager: DatabaseManager, gallery_window: GalleryWindow, download_window: DownloadWindow):
         super().__init__()
 
         self.db_manager = db_manager  # Riferimento al DatabaseManager
@@ -60,7 +60,6 @@ class Search(QWidget):
         self.setLayout(layout)
         
         self.load_cache()
-        
         self.result_list.itemClicked.connect(self.on_item_clicked)
                 
 

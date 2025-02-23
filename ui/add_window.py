@@ -4,16 +4,18 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Signal
 from PySide6.QtGui import QIcon
 from db.db_manager import DatabaseManager
+from ui.download_window import DownloadWindow
 
 class AddWindow(QWidget):
     
     accessory_added = Signal()
     
-    def __init__(self):
+    def __init__(self, download_window: DownloadWindow):
         super().__init__()
         
         # Crezione riferimento alle classi utilizzate
         self.db_manager = DatabaseManager()
+        self.download_window = download_window
         
         self.tags_list = self.db_manager.get_tags()
         
@@ -73,7 +75,6 @@ class AddWindow(QWidget):
         self.confirm_button.clicked.connect(self.add_accessory)
         layout.addWidget(self.confirm_button)
         layout.addStretch()
-        
         self.setLayout(layout)
 
     def choose_image(self):

@@ -11,16 +11,16 @@ class DownloadWindow(QWidget):
 
         # Pulsante per il download dell'immagine
         self.download_button = QPushButton("Scarica Immagine")
-        #self.download_button.setEnabled(False)
+        self.download_button.setEnabled(False)
         self.download_button.clicked.connect(self.download_image)
         self.layout().addWidget(self.download_button)
         
         self.image_data = None
-        
 
     def set_image_data(self, image_data):
         """Aggiorna l'immagine da scaricare e abilita il pulsante."""
         self.image_data = image_data
+        self.download_button.setEnabled(True)
 
     def download_image(self):
         """Salva l'immagine su file quando l'utente clicca sul pulsante."""
