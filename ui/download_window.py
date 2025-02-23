@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout
-import os
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog
+import base64
 
 class DownloadWindow(QWidget):
     def __init__(self):
@@ -10,37 +10,38 @@ class DownloadWindow(QWidget):
         self.title = QLabel("Download")
         self.layout().addWidget(self.title)
 
-        # Layout orizzontale per la lista delle immagini
-        self.image_list_layout = QVBoxLayout()
+        # Pulsante per il download dell'immagine
+        self.download_button = QPushButton("Scarica Immagine")
+        self.download_button.setEnabled(False)  # Disabilitato all'inizio
+        self.download_button.clicked.connect(self.download_image)
+        self.layout().addWidget(self.download_button)
 
-        # Aggiungi i bottoni per il download delle immagini
-        self.add_download_buttons()
+        # Variabile per memorizzare i dati dell'immagine (BLOB)
+        self.image_data = None
 
-        # Aggiungi il layout della lista delle immagini
-        self.layout().addLayout(self.image_list_layout)
+    def set_image_data(self, image_data):
+        """Aggiorna l'immagine da scaricare e abilita il pulsante."""
+        self.image_data = image_data
+        self.download_button.setEnabled(True)
+        print("DownloadWindow: set_image_data chiamato. Pulsante abilitato.")
 
-    def add_download_buttons(self):
-        image_folder = "resources"
-        image_files = [f"{i}.png" for i in range(1, 6)]  # Immagini 1.png, 2.png, ...
-
-        for image_file in image_files:
-            button = QPushButton(f"Scarica {image_file}")
-            button.clicked.connect(lambda checked, file=image_file: self.download_image(file))
-            self.image_list_layout.addWidget(button)
-
-    def download_image(self, image_file):
-        # Funzione per scaricare il file
-        image_path = os.path.join("resources", image_file)
-        save_path = os.path.join(os.getcwd(), image_file)  # Percorso di salvataggio
-
-        # Copia il file dalla cartella "resources" alla cartella corrente
-        try:
-            with open(image_path, "rb") as src_file:
-                data = src_file.read()
-
-            with open(save_path, "wb") as dst_file:
-                dst_file.write(data)
-
-            print(f"{image_file} scaricato con successo!")
-        except Exception as e:
-            print(f"Errore nel download di {image_file}: {e}")
+    def download_image(self):
+        """Salva l'immagine su file quando l'utente clicca sul pulsante."""
+        if self.image_data is not None:
+            file_path, _ = QFileDialog.getSaveFileName(
+                self,
+                "Salva Immagine",
+                "immagine.png",
+                "Immagini (*.png *.jpg *.jpeg)"
+            )
+            if file_path:
+                try:
+                    # Se image_data è una stringa, assumiamo sia in base64 e la decodifichiamo
+                    data_to_write = self.image_data
+                    if isinstance(self.image_data, str):
+                        data_to_write = base64.b64decode(self.image_data)
+                    with open(file_path, "wb") as f:
+                        f.write(data_to_write)
+                    print(f"Immagine salvata in {file_path}")
+                except Exception as e:
+                    print(f"Errore nel salvataggio dell'immagine: {e}")

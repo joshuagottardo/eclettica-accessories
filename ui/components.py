@@ -1,5 +1,4 @@
 from PySide6.QtWidgets import QMessageBox
-from PySide6.QtGui import QIcon
 
 class CustomMessageBox:
     def __init__(self, icon=QMessageBox.NoIcon, title="", text="", buttons=QMessageBox.Ok):

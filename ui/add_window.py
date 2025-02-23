@@ -4,9 +4,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Signal
 from PySide6.QtGui import QIcon
 from db.db_manager import DatabaseManager
-from ui.components import CustomMessageBox
 
-class Add(QWidget):
+class AddWindow(QWidget):
     
     accessory_added = Signal()
     

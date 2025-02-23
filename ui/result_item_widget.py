@@ -1,5 +1,4 @@
 from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout
-from PySide6.QtGui import QFont
 from PySide6.QtCore import Qt
 
 class ResultItemWidget(QWidget):
