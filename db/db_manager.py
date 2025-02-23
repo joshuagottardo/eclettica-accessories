@@ -8,6 +8,8 @@ class DatabaseManager:
     def __init__(self, db_name="app_database.db"):
         self.db_name = db_name
         self.connection = sqlite3.connect(self.db_name)
+        
+        # Per assicurare la creazione della tabella Accessorio, se non esiste già
         self.create_table()
 
     def create_table(self):

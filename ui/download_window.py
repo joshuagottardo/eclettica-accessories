@@ -5,18 +5,15 @@ class DownloadWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setLayout(QVBoxLayout())
-
-        # Titolo della sezione
         self.title = QLabel("Download")
         self.layout().addWidget(self.title)
 
         # Pulsante per il download dell'immagine
         self.download_button = QPushButton("Scarica Immagine")
-        self.download_button.setEnabled(False)  # Disabilitato all'inizio
+        #self.download_button.setEnabled(False)
         self.download_button.clicked.connect(self.download_image)
         self.layout().addWidget(self.download_button)
 
-        # Variabile per memorizzare i dati dell'immagine (BLOB)
         self.image_data = None
 
     def set_image_data(self, image_data):
@@ -28,6 +25,7 @@ class DownloadWindow(QWidget):
     def download_image(self):
         """Salva l'immagine su file quando l'utente clicca sul pulsante."""
         if self.image_data is not None:
+            print("sono nel primo if")
             file_path, _ = QFileDialog.getSaveFileName(
                 self,
                 "Salva Immagine",

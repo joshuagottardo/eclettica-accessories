@@ -11,17 +11,17 @@ class AddWindow(QWidget):
     
     def __init__(self):
         super().__init__()
+        
+        # Crezione riferimento alle classi utilizzate
         self.db_manager = DatabaseManager()
+        
         self.tags_list = self.db_manager.get_tags()
         
-        # Configura l'icona di sistema per le notifiche
         self.tray_icon = QSystemTrayIcon(QIcon("resources/icon.jpeg"), self)
         self.tray_icon.show()
 
-        # Layout principale
         layout = QVBoxLayout()
 
-        # Campo NOME
         name_layout = QHBoxLayout()
         name_label = QLabel("NOME")
         self.name_input = QLineEdit()
@@ -31,7 +31,6 @@ class AddWindow(QWidget):
         name_layout.addStretch()
         layout.addLayout(name_layout)
 
-        # Campo TIPO
         type_layout = QHBoxLayout()
         type_label = QLabel("TIPO")
         self.type_combobox = QComboBox()
@@ -42,7 +41,6 @@ class AddWindow(QWidget):
         type_layout.addStretch()
         layout.addLayout(type_layout)
 
-        # Selezione immagine
         image_layout = QHBoxLayout()
         image_label = QLabel("Seleziona Immagine")
         self.image_path = QLineEdit()
@@ -57,7 +55,6 @@ class AddWindow(QWidget):
         image_layout.addStretch()
         layout.addLayout(image_layout)
 
-        # Bottone Conferma
         self.confirm_button = QPushButton("AGGIUNGI")
         self.confirm_button.setStyleSheet(
             """
@@ -75,9 +72,8 @@ class AddWindow(QWidget):
         )
         self.confirm_button.clicked.connect(self.add_accessory)
         layout.addWidget(self.confirm_button)
-
         layout.addStretch()
-
+        
         self.setLayout(layout)
 
     def choose_image(self):
