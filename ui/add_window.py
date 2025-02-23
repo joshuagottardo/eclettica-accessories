@@ -5,17 +5,19 @@ from PySide6.QtCore import Signal
 from PySide6.QtGui import QIcon
 from db.db_manager import DatabaseManager
 from ui.download_window import DownloadWindow
+from ui.gallery_window import GalleryWindow
 
 class AddWindow(QWidget):
     
     accessory_added = Signal()
     
-    def __init__(self, download_window: DownloadWindow):
+    def __init__(self, download_window: DownloadWindow, gallery_window: GalleryWindow):
         super().__init__()
         
         # Crezione riferimento alle classi utilizzate
         self.db_manager = DatabaseManager()
         self.download_window = download_window
+        self.gallery_window = gallery_window
         
         self.tags_list = self.db_manager.get_tags()
         
@@ -85,6 +87,11 @@ class AddWindow(QWidget):
         file_path, _ = file_dialog.getOpenFileName(self, "Seleziona un'immagine", "", "Immagini (*.png *.jpg *.jpeg *.bmp *.gif)")
         if file_path:
             self.image_path.setText(file_path)
+            
+        with open(file_path, "rb") as file:
+                img_inserted = file.read()
+            
+        self.gallery_window.update_image(img_inserted)
 
     def add_accessory(self):
         """
@@ -101,9 +108,9 @@ class AddWindow(QWidget):
         try:
             # Leggi l'immagine come binario
             with open(immagine_path, "rb") as file:
-                immagine_data = file.read()
+                img_inserted = file.read()
 
-            self.db_manager.insert_accessory(nome, tipo, immagine_data)
+            self.db_manager.insert_accessory(nome, tipo, img_inserted)
             
             QMessageBox.warning(self, "Successo", "Accessorio inserito!")
             
@@ -115,3 +122,11 @@ class AddWindow(QWidget):
 
         except Exception as e:
             QMessageBox.critical(self, "Errore", f"Errore durante l'inserimento: {str(e)}")
+
+    def clean_input(self):
+        """
+        Pulisce tutti i campi di input
+        """
+        self.name_input.clear()
+        self.type_combobox.setCurrentIndex(0)
+        self.image_path.clear()

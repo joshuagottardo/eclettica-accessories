@@ -22,3 +22,9 @@ class GalleryWindow(QWidget):
             self.image_label.setPixmap(pixmap.scaled(400, 400, Qt.KeepAspectRatio))
         else:
             self.image_label.clear()
+            
+    def clear_image(self):
+        """
+        Metodo per pulire l'immagine nella galleria
+        """
+        self.image_label.clear()

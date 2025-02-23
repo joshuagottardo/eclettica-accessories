@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QComboBox, QListWidget, QListWidgetItem
 )
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, QEvent
 from db.db_manager import DatabaseManager
 from ui.result_item_widget import ResultItemWidget
 from ui.gallery_window import GalleryWindow
@@ -16,12 +16,12 @@ class Search(QWidget):
     def __init__(self, db_manager: DatabaseManager, gallery_window: GalleryWindow, download_window: DownloadWindow):
         super().__init__()
 
-        self.db_manager = db_manager  # Riferimento al DatabaseManager
-        self.gallery_window = gallery_window  # Riferimento alla GalleryWindow per aggiornare l'immagine
-        self.download_window = download_window  # Istanza di DownloadWindow
-        self.cache = []  # Cache locale dei dati
+        self.db_manager = db_manager
+        self.gallery_window = gallery_window
+        self.download_window = download_window
+        self.cache = []
         self.tags_list = self.db_manager.get_tags()
-        self.tags_list.insert(0, "------")  # Aggiungi "------" come opzione di default
+        self.tags_list.insert(0, "------")
         
         # Layout principale
         layout = QVBoxLayout()
@@ -55,6 +55,11 @@ class Search(QWidget):
 
         # Lista dei risultati
         self.result_list = QListWidget()
+        self.result_list.setStyleSheet("""
+            QListWidget::item:selected:active {
+                border: 1px solid white;
+            }
+        """)
         layout.addWidget(self.result_list)
         
         self.setLayout(layout)
@@ -113,6 +118,9 @@ class Search(QWidget):
             self.download_window.set_image_data(accessory.immagine)
 
     def display_all_results(self):
+        """
+        Mostra tutti i risultati ottenuti dalla cache
+        """
         self.result_list.clear()
 
         for accessory in self.cache:
@@ -122,3 +130,10 @@ class Search(QWidget):
             item.setData(Qt.UserRole, accessory)
             self.result_list.addItem(item)
             self.result_list.setItemWidget(item, item_widget)
+            
+    def clean_input(self):
+        """
+        Pulisce tutti i campi di input
+        """
+        self.name_input.clear()
+        self.type_combobox.setCurrentIndex(0)

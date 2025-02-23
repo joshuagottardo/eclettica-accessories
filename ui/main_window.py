@@ -23,7 +23,7 @@ class MainWindow(QMainWindow):
         self.db_manager = DatabaseManager()
         self.gallery_window = GalleryWindow()
         self.download_window = DownloadWindow()
-        self.add_window = AddWindow(self.download_window)
+        self.add_window = AddWindow(self.download_window, self.gallery_window)
         self.search_window = Search(self.db_manager, self.gallery_window, self.download_window)
         
         # Collegamento segnale "accessory_added" al metodo "load_cache" di Search"
@@ -69,14 +69,24 @@ class MainWindow(QMainWindow):
 
     def show_add_widget(self):
         """
-        Mostra la sezione 'Aggiungi' e nasconde la sezione 'Download'.
+        Mostra la sezione 'Aggiungi'
+        Nasconde la sezione 'Download'
+        Toglie l'immagine della sezione 'Galleria'
         """
         self.stacked_widget.setCurrentIndex(0)
         self.download_window.setHidden(True)
+        self.gallery_window.clear_image()
+        self.search_window.clean_input()
 
     def show_search_widget(self):
         """
-        Mostra la sezione 'Cerca' e mostra la sezione 'Download'.
+        Mostra la sezione 'Cerca'
+        Mostra la sezione 'Download'
+        Svuota tutti i campi di input della sezione 'Aggiungi'
+        Toglie l'immagine della sezione 'Galleria'
         """
         self.stacked_widget.setCurrentIndex(1)
         self.download_window.setHidden(False)
+        self.add_window.clean_input()
+        self.gallery_window.clear_image()
+        self.download_window.download_button.setEnabled(False)
